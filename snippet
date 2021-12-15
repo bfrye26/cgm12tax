@@ -1,0 +1,46 @@
+function wpse_edited_term( $term_id, $tt_id, $taxonomy ) {
+ 
+    // APi Key.  
+   $api_key = 'xxxxx'; 
+   $imdb = get_term_meta( $term_id, 'imdb_id', true );
+
+  
+  
+$request = wp_remote_get( 'http://www.omdbapi.com/?&apikey='.$api_key.'&i='.$imdb );
+  
+  if( is_wp_error( $request ) ) {
+	return false; // Bail early
+}
+
+$body = wp_remote_retrieve_body( $request );
+$data = json_decode( $body );
+
+$title = $data->Title;
+$plot = $data->Plot;
+$released = $data->Released;
+$director = $data->Director;
+//$genres = $data->Genre;
+$runtime = $data->Runtime;
+$actors = $data->Actors;
+$country = $data->Country;
+$language = $data->Language;
+$poster = $data->Poster;
+
+//update_field( 'description', $plot, $term_id);
+//rwmb_set_meta( $term_id, 'blu_review_name', $title);
+//update_field( 'movie_premiere_date', $released, $term_id);  
+//update_field( 'movie_detail_directors', $director, $term_id);
+//rwmb_set_meta( $term_id, 'film_genre', $genres);
+//add_metadata( 'term',$term_id, 'movie_running_time', $runtime); 
+//update_field( 'cast', $actors, $term_id); 
+//rwmb_set_meta( $term_id, 'country', $country); 
+//rwmb_set_meta( $term_id, 'language', $language);
+//rwmb_set_meta( $term_id, 'product_image', $poster);   
+//add_metadata( 'term', $term_id, 'cast', $actors);
+update_term_meta( $term_id, 'cast', $actors );
+
+BugFu::log($poster);
+}  
+
+add_action( 'edited_term', 'wpse_edited_term', 10, 3 );
+
